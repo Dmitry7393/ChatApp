@@ -6,6 +6,9 @@ set (CMAKE_CXX_STANDARD 11)
 # Create a list with all .cpp source files
 set( project_sources
    main.cpp
+   ChatHistory.cpp
+   ClientController.cpp
+   Connection.cpp
 )
 
 find_package(Boost 1.40.0 REQUIRED system thread serialization)
