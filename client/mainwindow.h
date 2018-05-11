@@ -6,7 +6,9 @@
 #include <string>
 #include <QThread>
 #include <QInputDialog>
-#include "NetworkHandler.h"
+#include <QScopedPointer>
+
+#include "ClientServerInteraction.h"
 
 namespace Ui {
 class MainWindow;
@@ -17,18 +19,16 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit MainWindow(std::string serverIP, QWidget *parent = 0);
+    explicit MainWindow(std::string serverIP, int port, QWidget *parent = 0);
     ~MainWindow();
 
 private slots:
-    void on_pushButton_clicked();
+    void sendMessage();
     void on_pushButton_3_clicked();
 
 private:
     Ui::MainWindow *ui;
-    ip::tcp::endpoint m_Endpoint;
-    boost::shared_ptr<ServerConnection> m_ServerConnection;
-    NetworkHandler m_NetworkHandler;
+    QScopedPointer<ClientServerInteraction> m_ClientServer;
 };
 
 #endif // MAINWINDOW_H

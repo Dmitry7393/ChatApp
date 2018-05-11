@@ -1,32 +1,23 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-MainWindow::MainWindow(std::string serverIP, QWidget *parent) :
+MainWindow::MainWindow(std::string serverIP, int port, QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),
-    m_Endpoint(ip::address::from_string(serverIP), 5555),
-    m_ServerConnection(new ServerConnection),
-    m_NetworkHandler(m_ServerConnection)
+    m_ClientServer(new ClientServerInteraction(serverIP, port))
 {
     ui->setupUi(this);
 
-    try
-    {
-        m_ServerConnection->connect(m_Endpoint);
-    }
-    catch(boost::system::system_error & err)
-    {
-        std::cout << err.what() << std::endl;
-    }
+    connect(ui->sendMessageButton, SIGNAL(clicked()), this, SLOT(sendMessage()));
 
     bool ok;
-    QString login = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                            tr("User name:"), QLineEdit::Normal,
+    QString username = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                            tr("Your login:"), QLineEdit::Normal,
                                             "", &ok);
+    printf(" username = %s \n", username.toStdString().c_str());
 
-    printf("login = %s \n", login.toStdString().c_str());
-    m_ServerConnection->setUsername(login.toStdString());
-    m_ServerConnection->sendMessage(ui->m_LineEditMessage->text().toStdString());
+    m_ClientServer->setUsername(username.toStdString());
+    m_ClientServer->authenticate();
 }
 
 MainWindow::~MainWindow()
@@ -34,13 +25,14 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::sendMessage()
 {
-    m_ServerConnection->sendMessage(ui->m_LineEditMessage->text().toStdString());
+    printf("  slot send message \n");
+    m_ClientServer->sendMessage(ui->m_LineEditMessage->text().toStdString());
 }
 
 void MainWindow::on_pushButton_3_clicked()
 {
     //check for new messages in separated thread
-    m_NetworkHandler.start();
+   // m_NetworkHandler.start();
 }

@@ -7,7 +7,6 @@
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <jsoncpp/json/json.h>
 using namespace boost::asio;
 
 struct ServerConnection
@@ -15,9 +14,8 @@ struct ServerConnection
     ServerConnection();
 
     void connect(ip::tcp::endpoint ep);
-    void checkNewMessages();
 
-    void sendMessage(const std::string& message);
+    void sendRequestToServer(const std::string& message);
     void setUsername(std::string username);
 
     std::string username() const;
@@ -26,7 +24,6 @@ private:
     void read_answer();
     void process_msg();
     size_t read_complete(const boost::system::error_code & err, size_t bytes);
-    std::string getJSONString(const std::string requestType, const std::string& receiver, const std::string& message);
 
 private:
     io_service service;

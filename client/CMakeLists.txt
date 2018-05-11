@@ -8,6 +8,8 @@ set ( SOURCES
  mainwindow.cpp
  NetworkHandler.cpp
  ServerConnection.cpp
+ JSONHandler.cpp
+ ClientServerInteraction.cpp
 )
 
 set ( MOC_HEADERS

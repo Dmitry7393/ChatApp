@@ -8,7 +8,7 @@ NetworkHandler::NetworkHandler(boost::shared_ptr<ServerConnection> serverConnect
 
 void NetworkHandler::run()
 {
-    m_ServerConnection->checkNewMessages();
+    //m_ServerConnection->checkNewMessages();
 }
 
 NetworkHandler::~NetworkHandler()
