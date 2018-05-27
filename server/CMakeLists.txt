@@ -9,6 +9,7 @@ set( project_sources
    ChatHistory.cpp
    ClientController.cpp
    Connection.cpp
+   RequestHandler.cpp
 )
 
 find_package(Boost 1.40.0 REQUIRED system thread serialization)

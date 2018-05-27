@@ -2,6 +2,7 @@
 
 Connection::Connection(boost::asio::io_service& io_service)
   : m_Socket(io_service)
+  , m_RequestHandler(new RequestHandler)
 {
 
 }
@@ -73,34 +74,11 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
            return;
        }
        printf("Server::handleRequest() bytes_transferred=%d \n", bytes_transferred);
-
        printf("Client ip: %s \n", m_Socket.remote_endpoint().address().to_string().c_str());
        std::string requestFromClient(read_buffer_, bytes_transferred);
+       m_RequestHandler->handleRequest(requestFromClient);
+
        printf("RequestFromClient: \n %s \n", requestFromClient.c_str());
-
-       Json::Value root;
-       Json::Reader reader;
-       if (!reader.parse(requestFromClient, root))
-       {
-           std::cout << "Error: " << reader.getFormattedErrorMessages();
-       }
-       else
-       {
-           Json::Value jsonValueRequestType = root["requestType"];
-           std::string requestType = jsonValueRequestType.asString();
-           printf("requestType = %s \n", requestType.c_str());
-
-           Json::Value jsonValueLogin = root["loginSender"];
-           m_Login = jsonValueLogin.asString();
-           printf("login = %s \n", m_Login.c_str());
-       }
-
-      /* printf("****************List with connected clients **************************** \n");
-       for (int j = 0; j < clients.size(); ++j)
-       {
-           printf("j = %d m_Login = %s \n", j, clients.at(j)->getLogin().c_str());
-       }*/
-       printf(" send response to client \n");
 
        sendResponseToClient();
 }

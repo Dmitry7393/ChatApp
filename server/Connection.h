@@ -6,11 +6,11 @@
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-#include <jsoncpp/json/json.h>
 using namespace boost::asio;
 using boost::asio::ip::tcp;
 
 #include "ClientState.h"
+#include "RequestHandler.h"
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {
@@ -38,6 +38,7 @@ private:
     char read_buffer_[max_msg];
     char write_buffer_[max_msg];
     std::string m_Login;
+    boost::shared_ptr<RequestHandler> m_RequestHandler;
 
 private:
     static ClientState* m_ClientState;
