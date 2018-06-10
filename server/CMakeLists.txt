@@ -10,6 +10,10 @@ set( project_sources
    ClientController.cpp
    Connection.cpp
    RequestHandler.cpp
+   ClientListHandler.cpp
+   SaveMessageHandler.cpp
+   GetMessageHandler.cpp
+   HistoryManager.cpp
 )
 
 find_package(Boost 1.40.0 REQUIRED system thread serialization)

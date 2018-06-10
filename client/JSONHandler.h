@@ -38,7 +38,7 @@ public:
     {
         Json::Value root;
 
-        root["requestType"] = "CheckNewMessages";
+        root["requestType"] = "GetNewMessages";
         root["username"] = username;
 
         return root.toStyledString();
@@ -48,7 +48,7 @@ public:
     {
         Json::Value root;
 
-        root["requestType"] = "CheckNewMessages";
+        root["requestType"] = "SendMessage";
         root["username"] = username;
         root["usernameReceiver"] = usernameReceiver;
         root["message"] = message;

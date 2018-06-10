@@ -2,7 +2,6 @@
 
 Connection::Connection(boost::asio::io_service& io_service)
   : m_Socket(io_service)
-  , m_RequestHandler(new RequestHandler)
 {
 
 }
@@ -64,33 +63,55 @@ void Connection::stop()
 
 ClientState* Connection::m_ClientState = NULL;
 
-void Connection::handleRequest(const boost::system::error_code& error, std::size_t bytes_transferred)
-   {
-       if (error)
-       {
-           printf("Connection::handleRequest error \n");
-           m_ClientState->StateChanged(m_Login);
-           stop();
-           return;
-       }
-       printf("Server::handleRequest() bytes_transferred=%d \n", bytes_transferred);
-       printf("Client ip: %s \n", m_Socket.remote_endpoint().address().to_string().c_str());
-       std::string requestFromClient(read_buffer_, bytes_transferred);
-       m_RequestHandler->handleRequest(requestFromClient);
+RequestHandler* Connection::createHandler(RequestType requestType)
+{
+    switch (requestType)
+    {
+        case GetClientList:
+            printf("-------------- GetClientList \n");
+            return new ClientListHandler;
 
-       printf("RequestFromClient: \n %s \n", requestFromClient.c_str());
+        case GetNewMessages:
+            printf("-------------- GetNewMessages \n");
+            return new GetMessageHandler;
 
-       sendResponseToClient();
+        case SendMessage:
+            printf("-------------- SendMessage \n");
+            return new SaveMessageHandler;
+        default:
+            break;
+    }
 }
 
+void Connection::handleRequest(const boost::system::error_code& error, std::size_t bytes_transferred)
+{
+    if (error)
+    {
+       printf("Connection::handleRequest error \n");
+       m_ClientState->StateChanged(m_Login);
+       stop();
+       return;
+    }
+    printf("Server::handleRequest() bytes_transferred=%d \n", bytes_transferred);
+    printf("Client ip: %s \n", m_Socket.remote_endpoint().address().to_string().c_str());
+    std::string requestFromClient(read_buffer_, bytes_transferred);
+    printf("RequestFromClient: \n %s \n", requestFromClient.c_str());
 
-void Connection::sendResponseToClient()
- {
-     std::string resp("SOME RESPONSE FROM SERVER  \n");
-     writeMessage(resp);
- }
+    RequestHandler* requestHandler = createHandler(RequestHandler::getRequestType(requestFromClient));
+    requestHandler->m_HistoryManager = m_HistoryManager;
+    m_Login = requestHandler->getClientName(requestFromClient);
+    requestHandler->m_ClientList = m_ClientState->getClientList();
 
-void Connection::writeMessage(const std::string& msg)
+    std::string responseToClient = requestHandler->handle(requestFromClient);
+
+    if (responseToClient.length() > 0)
+    {
+        printf(" INVOKE sendResponseToClient %s \n", responseToClient.c_str());
+        sendResponseToClient(responseToClient);
+    }
+}
+
+void Connection::sendResponseToClient(const std::string& msg)
 {
    std::copy(msg.begin(), msg.end(), write_buffer_);
    m_Socket.async_write_some( buffer(write_buffer_, msg.size()),

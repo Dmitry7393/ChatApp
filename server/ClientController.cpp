@@ -3,6 +3,7 @@
 ClientController::ClientController(io_service& service)
   : m_Acceptor(service, ip::tcp::endpoint(ip::tcp::v4(), 5555))
   , m_Socket(service)
+  , m_HistoryManager(new HistoryManager)
 {
     startAccept();
 }
@@ -11,6 +12,7 @@ void ClientController::startAccept()
 {
     printf("Waiting for clients... \n");
     boost::shared_ptr<Connection> connection(new Connection(m_Acceptor.get_io_service()));
+    connection->m_HistoryManager = m_HistoryManager;
     connection->SetState((ClientState*) this);
 
     m_Acceptor.async_accept(connection->socket(),
@@ -48,4 +50,15 @@ void ClientController::StateChanged(std::string login)
             m_ListWithClients.erase(m_ListWithClients.begin() + i);
         }
     }
+}
+
+std::vector<std::string> ClientController::getClientList()
+{
+    std::vector<std::string> listWithConnectedClients;
+    for (int i = 0; i < m_ListWithClients.size(); ++i)
+    {
+        listWithConnectedClients.push_back(m_ListWithClients.at(i)->getLogin());
+        printf("client =========== %s \n", m_ListWithClients.at(i)->getLogin().c_str());
+    }
+    return listWithConnectedClients;
 }

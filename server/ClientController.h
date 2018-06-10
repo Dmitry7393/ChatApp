@@ -2,6 +2,7 @@
 #define CLIENT_CONTROLLER
 
 #include "Connection.h"
+#include "HistoryManager.h"
 
 class ClientController : public ClientState
 {
@@ -9,6 +10,7 @@ class ClientController : public ClientState
 public:
     ClientController(io_service& service);
     void StateChanged(std::string login);
+    std::vector<std::string> getClientList();
 
 private:
     void startAccept();
@@ -23,6 +25,7 @@ private:
     std::string m_Login;
 
     std::vector<boost::shared_ptr<Connection> > m_ListWithClients;
+    std::shared_ptr<HistoryManager> m_HistoryManager;
 };
 
 #endif

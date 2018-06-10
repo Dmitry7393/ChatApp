@@ -7,6 +7,9 @@
 #include <QThread>
 #include <QInputDialog>
 #include <QScopedPointer>
+#include <QStringList>
+#include <QStringListModel>
+#include <QAbstractItemView>
 
 #include "ClientServerInteraction.h"
 
@@ -23,12 +26,19 @@ public:
     ~MainWindow();
 
 private slots:
+    void updateClientList();
     void sendMessage();
-    void on_pushButton_3_clicked();
+    void getNewMessages();
+    void selectOtherClient(const QModelIndex& index);
+
+private:
+    void updateView();
 
 private:
     Ui::MainWindow *ui;
     QScopedPointer<ClientServerInteraction> m_ClientServer;
+    QStringListModel *model;
+    QString m_selectedClientLogin;
 };
 
 #endif // MAINWINDOW_H
