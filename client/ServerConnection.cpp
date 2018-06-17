@@ -1,5 +1,6 @@
 #include "ServerConnection.h"
 
+
 ServerConnection::ServerConnection()
     : sock_(service)
     , started_(true)
@@ -7,8 +8,18 @@ ServerConnection::ServerConnection()
 
 }
 
+void ServerConnection::readResponse()
+{
+    printf("--------------- READER ------------------- \n");
+    already_read_ = 0;
+    read(sock_, buffer(buff_), boost::bind(&ServerConnection::readComplete, this, _1, _2));
+    std::string msg(buff_, already_read_);
+    printf(" ---------- After reading message - \n msg = %s \n", msg.c_str());
+}
+
 void ServerConnection::connect(ip::tcp::endpoint ep)
 {
+    //check error code
     sock_.connect(ep);
 }
 
@@ -17,10 +28,10 @@ void ServerConnection::setUsername(std::string username)
     m_CurrentUsername = username;
 }
 
-std::string ServerConnection::sendRequestToServer(const std::string& request)
+void ServerConnection::sendRequestToServer(const std::string& request)
 {
+    printf("ServerConnection::sendRequestToServer: request = %s \n", request.c_str());
     sock_.write_some(buffer(request));
-    return read_answer();
 }
 
 std::string ServerConnection::username() const
@@ -28,15 +39,7 @@ std::string ServerConnection::username() const
     return m_CurrentUsername;
 }
 
-std::string ServerConnection::read_answer()
-{
-    already_read_ = 0;
-    read(sock_, buffer(buff_), boost::bind(&ServerConnection::read_complete, this, _1, _2));
-    std::string msg(buff_, already_read_);
-    return msg;
-}
-
-size_t ServerConnection::read_complete(const boost::system::error_code & err, size_t bytes)
+size_t ServerConnection::readComplete(const boost::system::error_code & err, size_t bytes)
 {
     if ( err)
         return 0;

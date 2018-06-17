@@ -11,6 +11,7 @@ public:
     ClientController(io_service& service);
     void StateChanged(std::string login);
     std::vector<std::string> getClientList();
+    void deliverMessageToClient(const std::string& receiver, const std::string& message);
 
 private:
     void startAccept();

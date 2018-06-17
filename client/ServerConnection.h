@@ -15,14 +15,14 @@ struct ServerConnection
 
     void connect(ip::tcp::endpoint ep);
 
-    std::string sendRequestToServer(const std::string& message);
+    void sendRequestToServer(const std::string& message);
     void setUsername(std::string username);
 
     std::string username() const;
+    void readResponse();
 
 private:
-    std::string read_answer();
-    size_t read_complete(const boost::system::error_code & err, size_t bytes);
+    size_t readComplete(const boost::system::error_code & err, size_t bytes);
 
 private:
     io_service service;
@@ -33,6 +33,9 @@ private:
     char buff_[max_msg];
     bool started_;
     std::string m_CurrentUsername;
+
+    //////////
+    pthread_t m_threadReadResponseFromServer;
 };
 
 #endif

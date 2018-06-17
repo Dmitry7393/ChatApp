@@ -23,8 +23,7 @@ MainWindow::MainWindow(std::string serverIP, int port, QWidget *parent) :
 
     m_ClientServer->setUsername(username.toStdString());
     updateClientList();
-
-    getNewMessages();
+    m_ClientServer->readDataFromServer();
 }
 
 MainWindow::~MainWindow()
@@ -36,20 +35,19 @@ void MainWindow::updateClientList()
 {
     std::vector<std::string> clientList = m_ClientServer->getClientList();
 
-    // Make data
-    QStringList List;
+    QStringList listWithClients;
     for (int j = 0; j < clientList.size(); ++j)
     {
-        List.append(QString(QString::fromUtf8(clientList.at(j).c_str())));
+        listWithClients.append(QString(QString::fromUtf8(clientList.at(j).c_str())));
     }
 
-    model->setStringList(List);
+    model->setStringList(listWithClients);
     ui->m_clientListView->setModel(model);
 }
 
 void MainWindow::sendMessage()
 {
-    m_ClientServer->sendMessage(ui->m_fieldForMessage->text().toStdString(), m_selectedClientLogin.toStdString());
+    m_ClientServer->sendMessage(ui->m_fieldForMessage->text().toStdString(), "user2"); //m_selectedClientLogin.toStdString()
     ui->m_MessageBrowser->append(QString::fromUtf8(m_ClientServer->getUsername().c_str()) + ui->m_fieldForMessage->text());
     ui->m_fieldForMessage->clear();
 }

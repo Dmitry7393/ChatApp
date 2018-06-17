@@ -27,13 +27,15 @@ public:
 
     std::shared_ptr<HistoryManager> m_HistoryManager;
 
+    void sendResponseToClient(const std::string& msg);
+    bool call_ReadRequest = true;
 private:
 
   void readRequestFromClient();
-  size_t readComplete(const boost::system::error_code & err, size_t bytes);
+  size_t readComplete(const boost::system::error_code& err, size_t bytes);
   void stop();
   void handleRequest(const boost::system::error_code& error, std::size_t bytes_transferred);
-  void sendResponseToClient(const std::string& msg);
+
   void onWriteMessage(const boost::system::error_code& err, size_t bytes);
   RequestHandler* createHandler(RequestType requestType);
 
@@ -46,8 +48,7 @@ private:
 
 private:
     static ClientState* m_ClientState;
-
-
+    std::string m_clientIPAddress;
 };
 
 #endif

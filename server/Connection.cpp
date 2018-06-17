@@ -18,6 +18,8 @@ void Connection::SetState(ClientState* state)
 
 void Connection::readRequestFromClient()
 {
+    printf("Connection::readRequestFromClient() m_clientIPAddress = %s \n", m_clientIPAddress.c_str());
+    memset(read_buffer_, 0, max_msg);
      async_read(m_Socket, buffer(read_buffer_),
                 boost::bind(&Connection::readComplete, shared_from_this(), _1, _2),
                 boost::bind(&Connection::handleRequest, shared_from_this(), _1, _2));
@@ -26,11 +28,18 @@ void Connection::readRequestFromClient()
 size_t Connection::readComplete(const boost::system::error_code & err, size_t bytes)
 {
        if ( err)
+       {
+           printf("Connection::readComplete - error \n");
            return 0;
+       }
+
 
        int count = 0;
        bool found = false;
-
+       printf("Connection::readComplete readComplete = %d \n", bytes);
+       printf("Connection::readComplete ********* Rread_buffer_ ************** m_clientIPAddress = %s \n", m_clientIPAddress.c_str());
+       printf("Connection::readComplete read_buffer_ = %s \n", read_buffer_);
+       printf("Connection::readComplete ********************** END ********************** \n");
        for (size_t i = 0; i < bytes; ++i)
        {
            if (read_buffer_[i] == '{')
@@ -42,6 +51,7 @@ size_t Connection::readComplete(const boost::system::error_code & err, size_t by
                count--;
                if (count == 0)
                {
+                   printf("Connection::readComplete - found = true - break \n");
                    found = true;
                    break;
                }
@@ -68,15 +78,15 @@ RequestHandler* Connection::createHandler(RequestType requestType)
     switch (requestType)
     {
         case GetClientList:
-            printf("-------------- GetClientList \n");
+            printf("Connection::createHandler  GetClientList \n");
             return new ClientListHandler;
 
         case GetNewMessages:
-            printf("-------------- GetNewMessages \n");
+            printf("Connection::createHandler  GetNewMessages \n");
             return new GetMessageHandler;
 
         case SendMessage:
-            printf("-------------- SendMessage \n");
+            printf("Connection::createHandler SendMessage \n");
             return new SaveMessageHandler;
         default:
             break;
@@ -92,10 +102,12 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
        stop();
        return;
     }
-    printf("Server::handleRequest() bytes_transferred=%d \n", bytes_transferred);
-    printf("Client ip: %s \n", m_Socket.remote_endpoint().address().to_string().c_str());
+    printf("Connection::handleRequest bytes_transferred=%d \n", bytes_transferred);
+    printf("Connection::handleRequest Client ip: %s \n", m_Socket.remote_endpoint().address().to_string().c_str());
+    m_clientIPAddress = m_Socket.remote_endpoint().address().to_string();
     std::string requestFromClient(read_buffer_, bytes_transferred);
-    printf("RequestFromClient: \n %s \n", requestFromClient.c_str());
+    memset(read_buffer_, 0, max_msg);
+    printf("Connection::handleRequest RequestFromClient: \n %s \n", requestFromClient.c_str());
 
     RequestHandler* requestHandler = createHandler(RequestHandler::getRequestType(requestFromClient));
     requestHandler->m_HistoryManager = m_HistoryManager;
@@ -104,21 +116,47 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
 
     std::string responseToClient = requestHandler->handle(requestFromClient);
 
-    if (responseToClient.length() > 0)
+    std::string userName = requestHandler->parseJSONValue(requestFromClient, JSONData::username);
+    std::string usernameReceiver = requestHandler->parseJSONValue(requestFromClient, JSONData::usernameReceiver);
+    std::string message = requestHandler->parseJSONValue(requestFromClient, JSONData::message);
+    printf("Connection::handleRequest   userName = %s \n", userName.c_str());
+    printf("Connection::handleRequest   usernameReceiver = %s \n", usernameReceiver.c_str());
+    printf("Connection::handleRequest   message = %s \n", message.c_str());
+
+    if (RequestHandler::getRequestType(requestFromClient) == RequestType::SendMessage)
     {
-        printf(" INVOKE sendResponseToClient %s \n", responseToClient.c_str());
-        sendResponseToClient(responseToClient);
+        if (userName != usernameReceiver)
+        {
+            m_ClientState->deliverMessageToClient(usernameReceiver, message);
+        }
+        else
+        {
+            printf("Connection::handleRequest - message was not sent \n");
+        }
     }
+
+    printf("Connection::handleRequest call sendResponseTo current Client responseToClient = %s | \n", responseToClient.c_str());
+
+    sendResponseToClient(responseToClient);
+    call_ReadRequest = true;
 }
+
 
 void Connection::sendResponseToClient(const std::string& msg)
 {
-   std::copy(msg.begin(), msg.end(), write_buffer_);
-   m_Socket.async_write_some( buffer(write_buffer_, msg.size()),
+    printf("Connection::sendResponseToClient msg = %s | m_clientIPAddress = %s | \n", msg.c_str(), m_clientIPAddress.c_str());
+    std::copy(msg.begin(), msg.end(), write_buffer_);
+    m_Socket.async_write_some( buffer(write_buffer_, msg.size()),
                           boost::bind(&Connection::onWriteMessage, shared_from_this(), _1, _2));
+    memset(write_buffer_, 0, max_msg);
 }
 
 void Connection::onWriteMessage(const boost::system::error_code& err, size_t bytes)
 {
-    readRequestFromClient();
+    printf("Connection::onWriteMessage \n");
+    if (call_ReadRequest)
+    {
+        printf("Connection::onWriteMessage call function readRequestFromClient() \n");
+        readRequestFromClient();
+    }
 }

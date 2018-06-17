@@ -6,6 +6,7 @@
 #include "NetworkHandler.h"
 #include "Message.h"
 #include "JSONHandler.h"
+#include <thread>
 
 class ClientServerInteraction
 {
@@ -40,6 +41,19 @@ public:
         return m_Username;
     }
 
+    void readResponsesInSeparateThread()
+    {
+        while (true)
+        {
+            m_ServerConnection->readResponse();
+        }
+    }
+
+    void readDataFromServer()
+    {
+        m_threadCheckDataFromServer = new std::thread(&ClientServerInteraction::readResponsesInSeparateThread, this);
+    }
+
     int authenticate()
     {
         m_ServerConnection->sendRequestToServer(m_JSONHandler.createAuthenticateRequest(m_Username));
@@ -53,8 +67,8 @@ public:
     std::vector<std::string> getClientList()
     {
         std::vector<std::string> list;
-        std::string resp = m_ServerConnection->sendRequestToServer(m_JSONHandler.createClientListRequest(m_Username));
-        printf("RESPONSE FROM SERVER = \n");
+        m_ServerConnection->sendRequestToServer(m_JSONHandler.createClientListRequest(m_Username));
+     /*   printf("RESPONSE FROM SERVER = \n");
         std::cout << resp << "\n";
 
         printf("--------------------- parse ------------------- \n");
@@ -77,18 +91,14 @@ public:
                 std::cout << "    name: " << userNames[i].asString() << "\n";
                 list.push_back(userNames[i].asString());
             }
-        }
+        }*/
         return list;
     }
 
     std::string m_MessagesToAllUsers;
     void getMessages()
     {
-        std::string resp = m_ServerConnection->sendRequestToServer(m_JSONHandler.createCheckNewMessagesRequest(m_Username));
-
-        m_MessagesToAllUsers = resp;
-        printf("RESPONSE FROM SERVER = \n");
-        std::cout << resp << "\n";
+        m_ServerConnection->sendRequestToServer(m_JSONHandler.createCheckNewMessagesRequest(m_Username));
     }
 
     std::vector<std::string> getMessagesWithClient(const std::string& selectedUser)
@@ -137,6 +147,8 @@ private:
     boost::shared_ptr<ServerConnection> m_ServerConnection;
     NetworkHandler m_NetworkHandler;
     JSONHandler m_JSONHandler;
+
+     std::thread* m_threadCheckDataFromServer;
 };
 
 #endif

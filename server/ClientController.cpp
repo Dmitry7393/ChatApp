@@ -10,7 +10,7 @@ ClientController::ClientController(io_service& service)
 
 void ClientController::startAccept()
 {
-    printf("Waiting for clients... \n");
+    printf("ClientController::startAccept() Waiting for clients... \n");
     boost::shared_ptr<Connection> connection(new Connection(m_Acceptor.get_io_service()));
     connection->m_HistoryManager = m_HistoryManager;
     connection->SetState((ClientState*) this);
@@ -61,4 +61,19 @@ std::vector<std::string> ClientController::getClientList()
         printf("client =========== %s \n", m_ListWithClients.at(i)->getLogin().c_str());
     }
     return listWithConnectedClients;
+}
+
+void ClientController::deliverMessageToClient(const std::string& receiver, const std::string& message)
+{
+    printf("ClientController::deliverMessageToClient message = %s \n", message.c_str());
+    for (int i = 0; i < m_ListWithClients.size(); ++i)
+    {
+        if (m_ListWithClients.at(i)->getLogin() == receiver)
+        {
+            printf("ClientController::deliverMessageToClient call sendResponseToClient \n");
+            m_ListWithClients.at(i)->call_ReadRequest = false;
+            m_ListWithClients.at(i)->sendResponseToClient("{  \n" + message + " }");
+        }
+    }
+    printf("ClientController::deliverMessageToClient end of method \n");
 }
