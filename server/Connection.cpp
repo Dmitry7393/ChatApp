@@ -81,13 +81,17 @@ RequestHandler* Connection::createHandler(RequestType requestType)
             printf("Connection::createHandler  GetClientList \n");
             return new ClientListHandler;
 
-        case GetNewMessages:
-            printf("Connection::createHandler  GetNewMessages \n");
+        case GetMessageWithUser:
+            printf("Connection::createHandler  GetMessageWithUser \n");
             return new GetMessageHandler;
 
         case SendMessage:
             printf("Connection::createHandler SendMessage \n");
             return new SaveMessageHandler;
+
+        case PingServer:
+            printf("Connection::createHandler PingServer \n");
+
         default:
             break;
     }

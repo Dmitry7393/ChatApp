@@ -19,7 +19,7 @@ struct ServerConnection
     void setUsername(std::string username);
 
     std::string username() const;
-    void readResponse();
+    std::string readResponse();
 
 private:
     size_t readComplete(const boost::system::error_code & err, size_t bytes);

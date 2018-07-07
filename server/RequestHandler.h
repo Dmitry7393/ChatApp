@@ -11,10 +11,10 @@
 
 enum RequestType
 {
-    Authenticate,
     GetClientList,
-    GetNewMessages,
-    SendMessage
+    GetMessageWithUser,
+    SendMessage,
+    PingServer
 };
 
 enum JSONData
@@ -70,7 +70,7 @@ public:
 
     static RequestType getRequestType(const std::string& request)
     {
-        std::vector<std::string> g_requestTypes = { "Authenticate", "GetClientList", "GetNewMessages", "SendMessage" };
+        std::vector<std::string> g_requestTypes = { "GetClientList", "GetMessageWithUser", "SendMessage", "PingServer" };
         Json::Value root;
         Json::Reader reader;
         if (!reader.parse(request, root))
@@ -97,13 +97,17 @@ public:
                     printf("handle GetClientList request \n");
                     return RequestType::GetClientList;
                     break;
-                case GetNewMessages:
+                case GetMessageWithUser:
                     printf("handle GetNewMessages request \n");
-                    return RequestType::GetNewMessages;
+                    return RequestType::GetMessageWithUser;
                     break;
                 case SendMessage:
                     printf("handle SendMessage request \n");
                     return RequestType::SendMessage;
+                    break;
+                case PingServer:
+                    printf("handle SendMessage request \n");
+                    return RequestType::PingServer;
                     break;
                 default:
                     printf("Incorrect request type \n");

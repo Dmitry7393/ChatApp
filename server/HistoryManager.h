@@ -52,6 +52,19 @@ public:
         return root.toStyledString();
     }
 
+    std::vector<std::string> getMessagesBetweenTwoUsers(const std::string& loginSender, const std::string& loginReceiver)
+    {
+        std::vector<std::string> messages;
+        for (int i = 0; i < m_chatHistory.size(); ++i)
+        {
+            if (m_chatHistory.at(i).checkHistoryExists(loginSender, loginReceiver))
+            {
+                messages = m_chatHistory.at(i).getMessages();
+            }
+        }
+        return messages;
+    }
+
 private:
     // if history was not found - return -1
     int findHistory(const std::string& login1, const std::string& login2)

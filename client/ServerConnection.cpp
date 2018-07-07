@@ -8,13 +8,13 @@ ServerConnection::ServerConnection()
 
 }
 
-void ServerConnection::readResponse()
+std::string ServerConnection::readResponse()
 {
     printf("--------------- READER ------------------- \n");
     already_read_ = 0;
     read(sock_, buffer(buff_), boost::bind(&ServerConnection::readComplete, this, _1, _2));
-    std::string msg(buff_, already_read_);
-    printf(" ---------- After reading message - \n msg = %s \n", msg.c_str());
+    std::string response(buff_, already_read_);
+    return response;
 }
 
 void ServerConnection::connect(ip::tcp::endpoint ep)

@@ -2,144 +2,36 @@
 #define CLIENTSERVERINTERACTION_H
 #include <string>
 #include <vector>
-
+#include <QObject>
 #include "NetworkHandler.h"
 #include "Message.h"
 #include "JSONHandler.h"
+#include "GUIUpdater.h"
 #include <thread>
+#include "ResponseHandler.h"
 
-class ClientServerInteraction
-{
+class ClientServerInteraction : public QObject {
+Q_OBJECT
 
 public:
-    ClientServerInteraction(const std::string& serverIP, int port)
-       : m_Endpoint(ip::address::from_string(serverIP), port),
-         m_ServerConnection(new ServerConnection),
-         m_NetworkHandler(m_ServerConnection)
-    {
-        try
-        {
-            m_ServerConnection->connect(m_Endpoint);
-        }
-        catch(boost::system::system_error & err)
-        {
-            std::cout << err.what() << std::endl;
-        }
+    ClientServerInteraction(const std::string& serverIP, int port);
 
-        printf("m_Username = %s \n", m_Username.c_str());
-        m_ServerConnection->setUsername(m_Username);
-        //m_ServerConnection->sendMessage(ui->m_LineEditMessage->text().toStdString());
-    }
+signals:
+    void updateClientList(const std::vector<std::string>&);
+  //  void updateMessageBrowser(std::vector<std::string> messages);
 
-    void setUsername(const std::string& username)
-    {
-        m_Username = username;
-    }
+public:
+    void setGUIUpdater(GUIUpdater* updater);
+    void setUsername(const std::string& username);
+    std::string getUsername();
+    void readResponsesInSeparateThread();
+    void handleResponse(const std::string& response);
+    void readDataFromServer();
 
-    std::string getUsername()
-    {
-        return m_Username;
-    }
-
-    void readResponsesInSeparateThread()
-    {
-        while (true)
-        {
-            m_ServerConnection->readResponse();
-        }
-    }
-
-    void readDataFromServer()
-    {
-        m_threadCheckDataFromServer = new std::thread(&ClientServerInteraction::readResponsesInSeparateThread, this);
-    }
-
-    int authenticate()
-    {
-        m_ServerConnection->sendRequestToServer(m_JSONHandler.createAuthenticateRequest(m_Username));
-    }
-
-    void sendMessage(const std::string& message, const std::string& userReceiver)
-    {
-        m_ServerConnection->sendRequestToServer(m_JSONHandler.createSendMessageRequest(m_Username, userReceiver, message));
-    }
-
-    std::vector<std::string> getClientList()
-    {
-        std::vector<std::string> list;
-        m_ServerConnection->sendRequestToServer(m_JSONHandler.createClientListRequest(m_Username));
-     /*   printf("RESPONSE FROM SERVER = \n");
-        std::cout << resp << "\n";
-
-        printf("--------------------- parse ------------------- \n");
-        Json::Value root;
-        Json::Reader reader;
-        if (!reader.parse(resp, root))
-        {
-            std::cout << "Error: " << reader.getFormattedErrorMessages();
-        }
-        else
-        {
-            Json::Value jsonValueResponseType = root["responseType"];
-            std::string responseType = jsonValueResponseType.asString();
-            printf("---- responseType = %s \n", responseType.c_str());
-
-            Json::Value userNames = root["usernames"]; // array of usernames
-            printf(" userNames.size() = %d \n", userNames.size());
-            for (int i = 0; i < userNames.size(); i++)
-            {
-                std::cout << "    name: " << userNames[i].asString() << "\n";
-                list.push_back(userNames[i].asString());
-            }
-        }*/
-        return list;
-    }
-
-    std::string m_MessagesToAllUsers;
-    void getMessages()
-    {
-        m_ServerConnection->sendRequestToServer(m_JSONHandler.createCheckNewMessagesRequest(m_Username));
-    }
-
-    std::vector<std::string> getMessagesWithClient(const std::string& selectedUser)
-    {
-        std::vector<std::string> list;
-        Json::Value root;
-        Json::Reader reader;
-        if (!reader.parse(m_MessagesToAllUsers, root))
-        {
-            std::cout << "Error: " << reader.getFormattedErrorMessages();
-        }
-        else
-        {
-            Json::Value jsonValueResponseType = root["responseType"];
-            std::string responseType = jsonValueResponseType.asString();
-            printf("---- responseType = %s \n", responseType.c_str());
-
-            Json::Value history = root["history"]; // array of history
-            printf(" history.size() = %d \n", history.size());
-            for (int i = 0; i < history.size(); i++)
-            {
-               //std::cout << "    history2: " << history2[i].asString() << "\n";
-               Json::Value block = history[i];
-               Json::Value jsonUsername = block["username"];
-
-               std::string username = jsonUsername.asString();
-               printf("---- username = %s \n", username.c_str());
-
-               if(username == selectedUser)
-               {
-                   Json::Value messages = block["messages"];
-                   for (int j = 0; j < messages.size(); j++)
-                   {
-                       std::cout << "     messages[i]: " <<  messages[j].asString() << "\n";
-                       list.push_back(messages[j].asString());
-                   }
-               }
-            }
-        }
-        return list;
-    }
+    //requests to server
+    void sendMessage(const std::string& message, const std::string& userReceiver);
+    void getClientList();
+    std::vector<std::string> getMessagesWithClient(const std::string& selectedUser);
 
 private:
     std::string m_Username;
@@ -148,7 +40,10 @@ private:
     NetworkHandler m_NetworkHandler;
     JSONHandler m_JSONHandler;
 
-     std::thread* m_threadCheckDataFromServer;
+    std::thread* m_threadCheckDataFromServer;
+    GUIUpdater* m_GUIUpdater;
+    boost::shared_ptr<ResponseHandler> m_ResponseHandler;
+
 };
 
 #endif

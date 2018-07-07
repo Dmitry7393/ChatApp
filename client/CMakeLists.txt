@@ -10,11 +10,14 @@ set ( SOURCES
  ServerConnection.cpp
  JSONHandler.cpp
  ClientServerInteraction.cpp
+ GUIUpdater.cpp
+ ResponseHandler.cpp
 )
 
 set ( MOC_HEADERS
  mainwindow.h
  NetworkHandler.h
+ ClientServerInteraction.h
 )
 
 set ( UIS

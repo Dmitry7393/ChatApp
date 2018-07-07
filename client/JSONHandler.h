@@ -9,60 +9,16 @@ class JSONHandler
 {
 
 public:
-    JSONHandler()
-    {
+    JSONHandler();
 
-    }
+    std::string createClientListRequest(const std::string& username);
+    std::string createGetMessageWithUserRequest(const std::string& username, const std::string& userNameReceiver);
 
-    std::string createAuthenticateRequest(const std::string& username)
-    {
-        Json::Value root;
+    std::string createSendMessageRequest(const std::string& username,
+                                         const std::string& usernameReceiver,
+                                         const std::string& message);
 
-        root["requestType"] = "Authenticate";
-        root["username"] = username;
-
-        return root.toStyledString();
-    }
-
-    std::string createClientListRequest(const std::string& username)
-    {
-        Json::Value root;
-
-        root["requestType"] = "GetClientList";
-        root["username"] = username;
-
-        return root.toStyledString();
-    }
-
-    std::string createCheckNewMessagesRequest(const std::string& username)
-    {
-        Json::Value root;
-
-        root["requestType"] = "GetNewMessages";
-        root["username"] = username;
-
-        return root.toStyledString();
-    }
-
-    std::string createSendMessageRequest(const std::string& username, const std::string& usernameReceiver, const std::string& message)
-    {
-        Json::Value root;
-
-        root["requestType"] = "SendMessage";
-        root["username"] = username;
-        root["usernameReceiver"] = usernameReceiver;
-        root["message"] = message;
-
-        return root.toStyledString();
-    }
-
-    std::string createHistoryRequest()
-    {
-
-    }
-
-private:
-
+    std::string createPingServerRequest(const std::string& username, const std::string& userNameReceiver);
 };
 
 #endif

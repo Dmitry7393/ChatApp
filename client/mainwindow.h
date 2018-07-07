@@ -12,21 +12,26 @@
 #include <QAbstractItemView>
 
 #include "ClientServerInteraction.h"
+#include "GUIUpdater.h"
 
 namespace Ui {
 class MainWindow;
 }
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public GUIUpdater
 {
     Q_OBJECT
 
 public:
     explicit MainWindow(std::string serverIP, int port, QWidget *parent = 0);
-    ~MainWindow();
+     ~MainWindow();
+
+public slots:
+    void updateClientListView(const std::vector<std::string>& clientList);
+    void updateMessageBrowser(std::vector<std::string> messageList);
 
 private slots:
-    void updateClientList();
+    void updateClientListttt();
     void sendMessage();
     void getNewMessages();
     void selectOtherClient(const QModelIndex& index);
