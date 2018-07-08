@@ -31,13 +31,9 @@ public slots:
     void updateMessageBrowser(std::vector<std::string> messageList);
 
 private slots:
-    void updateClientListttt();
+    void updateClientList();
     void sendMessage();
-    void getNewMessages();
-    void selectOtherClient(const QModelIndex& index);
-
-private:
-    void updateView();
+    void selectClient(const QModelIndex& index);
 
 private:
     Ui::MainWindow *ui;

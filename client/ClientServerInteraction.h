@@ -8,7 +8,9 @@
 #include "JSONHandler.h"
 #include "GUIUpdater.h"
 #include <thread>
-#include "ResponseHandler.h"
+
+#include "ClientListHandler.h"
+#include "MessageHandler.h"
 
 class ClientServerInteraction : public QObject {
 Q_OBJECT
@@ -42,7 +44,7 @@ private:
 
     std::thread* m_threadCheckDataFromServer;
     GUIUpdater* m_GUIUpdater;
-    boost::shared_ptr<ResponseHandler> m_ResponseHandler;
+    //boost::shared_ptr<ResponseHandler> m_ResponseHandler;
 
 };
 

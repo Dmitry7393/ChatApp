@@ -72,7 +72,7 @@ void ClientController::deliverMessageToClient(const std::string& receiver, const
         {
             printf("ClientController::deliverMessageToClient call sendResponseToClient \n");
             m_ListWithClients.at(i)->call_ReadRequest = false;
-            m_ListWithClients.at(i)->sendResponseToClient("{  \n" + message + " }");
+            m_ListWithClients.at(i)->sendResponseToClient(message);
         }
     }
     printf("ClientController::deliverMessageToClient end of method \n");

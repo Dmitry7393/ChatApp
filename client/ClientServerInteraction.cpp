@@ -3,8 +3,8 @@
 ClientServerInteraction::ClientServerInteraction(const std::string& serverIP, int port)
    : m_Endpoint(ip::address::from_string(serverIP), port),
      m_ServerConnection(new ServerConnection),
-     m_NetworkHandler(m_ServerConnection),
-     m_ResponseHandler(new ResponseHandler)
+     m_NetworkHandler(m_ServerConnection)
+   //  m_ResponseHandler(new ResponseHandler)
 {
     try
     {
@@ -46,20 +46,27 @@ void ClientServerInteraction::readResponsesInSeparateThread()
 void ClientServerInteraction::handleResponse(const std::string& response)
 {
     printf("  handleResponse response = %s \n", response.c_str());
-    std::vector<std::string> list = m_ResponseHandler->handle(response);
 
-    switch(m_ResponseHandler->getResponseType(response))
+    ResponseHandler* respHandler;
+    std::vector<std::string> list;
+
+    switch(ResponseHandler::getResponseType(response))
     {
         case ResponseType::ClientList:
             printf("invoke method of m_GUIUpdater \n");
+
+            respHandler = new ClientListHandler();
+            list = respHandler->handle(response);
+
             m_GUIUpdater->updateClientListView(list);
 
             //emit updateClientList(list);
             break;
 
         case ResponseType::DeliverMessage:
-           // m_GUIUpdater->updateMessageBrowser(list);
-
+            respHandler = new MessageHandler();
+            list = respHandler->handle(response);
+            m_GUIUpdater->updateMessageBrowser(list);
         default:
             break;
     }

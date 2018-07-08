@@ -8,30 +8,8 @@ class GetMessageHandler : public RequestHandler
 public:
     GetMessageHandler() { }
 
-    /*std::string handle(const std::string& jsonRequest)
+    std::string handle(const std::string& jsonRequest)
     {
-        printf("===================== GetMessageHandler ========================== \n");
-
-        std::string loginSender = parseJSONValue(jsonRequest, JSONData::username);
-        printf("  loginSender = %s \n", loginSender.c_str());
-        //std::string loginReceiver = parseJSONValue(jsonRequest, JSONData::usernameReceiver);
-
-        return m_HistoryManager->retrieveHistory(loginSender);
-       /* std::vector<std::string> messages = m_HistoryManager->retrieveHistory(loginSender, "dmitry");
-        Json::Value root;
-
-        root["responseType"] = "GetMessages";
-        Json::Value listMessageNode = root["messages"];
-
-        for (int i = 0; i < messages.size(); ++i)
-        {
-            listMessageNode.append(messages.at(i));
-        }
-        root["messages"] = listMessageNode;
-        return root.toStyledString();*/
-  /*  }*/
-     std::string handle(const std::string& jsonRequest)
-     {
          printf("===================== GetMessageHandler ========================== \n");
 
          std::string loginSender = parseJSONValue(jsonRequest, JSONData::username);
@@ -52,7 +30,7 @@ public:
          }
          root["messages"] = listMessageNode;
          return root.toStyledString();
-      }
+     }
 };
 
 #endif

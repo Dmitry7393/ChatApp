@@ -36,10 +36,6 @@ size_t Connection::readComplete(const boost::system::error_code & err, size_t by
 
        int count = 0;
        bool found = false;
-       printf("Connection::readComplete readComplete = %d \n", bytes);
-       printf("Connection::readComplete ********* Rread_buffer_ ************** m_clientIPAddress = %s \n", m_clientIPAddress.c_str());
-       printf("Connection::readComplete read_buffer_ = %s \n", read_buffer_);
-       printf("Connection::readComplete ********************** END ********************** \n");
        for (size_t i = 0; i < bytes; ++i)
        {
            if (read_buffer_[i] == '{')
@@ -131,7 +127,9 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
     {
         if (userName != usernameReceiver)
         {
-            m_ClientState->deliverMessageToClient(usernameReceiver, message);
+            requestHandler = new GetMessageHandler();
+            requestHandler->m_HistoryManager = m_HistoryManager;
+            m_ClientState->deliverMessageToClient(usernameReceiver, requestHandler->handle(requestFromClient));
         }
         else
         {

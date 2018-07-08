@@ -54,11 +54,14 @@ public:
 
     std::vector<std::string> getMessagesBetweenTwoUsers(const std::string& loginSender, const std::string& loginReceiver)
     {
+        printf("******************** 1 \n");
         std::vector<std::string> messages;
         for (int i = 0; i < m_chatHistory.size(); ++i)
         {
+            printf("******************** 2 \n");
             if (m_chatHistory.at(i).checkHistoryExists(loginSender, loginReceiver))
             {
+                printf("******************** 3 \n");
                 messages = m_chatHistory.at(i).getMessages();
             }
         }

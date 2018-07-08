@@ -11,14 +11,11 @@ MainWindow::MainWindow(std::string serverIP, int port, QWidget *parent) :
     m_ClientServer->setGUIUpdater((GUIUpdater*) this);
     model = new QStringListModel(this);
 
-    connect(ui->m_getClientListButton, SIGNAL(clicked()), this, SLOT(updateClientListttt()));
+    connect(ui->m_getClientListButton, SIGNAL(clicked()), this, SLOT(updateClientList()));
     connect(ui->m_sendMessageButton, SIGNAL(clicked()), this, SLOT(sendMessage()));
-    connect(ui->m_getMessagesButton, SIGNAL(clicked()), this, SLOT(getNewMessages()));
+    connect(ui->m_clientListView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectClient(const QModelIndex&)));
 
-
-    connect(ui->m_clientListView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(selectOtherClient(const QModelIndex&)));
-
-     //doesn't work in qt - try later
+    //doesn't work in qt - try later
     //QObject::connect(m_ClientServer.data(), SIGNAL(updateClientList(const std::vector<std::string>&)), this, SLOT(updateClientListView(const std::vector<std::string>&)));
 
     bool ok;
@@ -28,7 +25,7 @@ MainWindow::MainWindow(std::string serverIP, int port, QWidget *parent) :
     printf(" username = %s \n", username.toStdString().c_str());
 
     m_ClientServer->setUsername(username.toStdString());
-    updateClientListttt();
+    updateClientList();
     m_ClientServer->readDataFromServer();
 }
 
@@ -52,42 +49,33 @@ void MainWindow::updateClientListView(const std::vector<std::string>& clientList
 
 void MainWindow::updateMessageBrowser(std::vector<std::string> messageList)
 {
-    printf("MainWindow::updateMessageBrowser \n");
+    printf("MainWindow::updateMessageBrowser 1 \n");
+  //  ui->m_MessageBrowser->append("sssssssssssssssss");
+    ui->m_MessageBrowser->clear();
+    printf("MainWindow::updateMessageBrowser 2 \n");
+    for (int j = 0; j < messageList.size(); ++j)
+    {
+        printf(" message == %s \n", messageList.at(j).c_str());
+        ui->m_MessageBrowser->setText(ui->m_MessageBrowser->text() + messageList.at(j).c_str() + "\n");
+       // ui->m_MessageBrowser->append(QString::fromUtf8(messageList.at(j).c_str()));
+    }
 }
 
-void MainWindow::updateClientListttt()
+void MainWindow::updateClientList()
 {
     m_ClientServer->getClientList();
-
 }
 
 void MainWindow::sendMessage()
 {
     m_ClientServer->sendMessage(ui->m_fieldForMessage->text().toStdString(), m_selectedClientLogin.toStdString());
-    ui->m_MessageBrowser->append(QString::fromUtf8(m_ClientServer->getUsername().c_str()) + ui->m_fieldForMessage->text());
+    ui->m_MessageBrowser->setText(ui->m_MessageBrowser->text() + QString::fromUtf8(m_ClientServer->getUsername().c_str()) + ": " + ui->m_fieldForMessage->text() + "\n");
+   // ui->m_MessageBrowser->append(QString::fromUtf8(m_ClientServer->getUsername().c_str()) + ": " + ui->m_fieldForMessage->text());
     ui->m_fieldForMessage->clear();
 }
 
-void MainWindow::getNewMessages()
-{
-    updateView();
-}
-
-void MainWindow::updateView()
-{
-    std::vector<std::string> list = m_ClientServer->getMessagesWithClient(m_selectedClientLogin.toStdString());
-
-    for (int i = 0; i < list.size(); ++i)
-    {
-        ui->m_MessageBrowser->append(QString::fromUtf8(list.at(i).c_str()));
-    }
-}
-
-void MainWindow::selectOtherClient(const QModelIndex& index)
+void MainWindow::selectClient(const QModelIndex& index)
 {
     m_selectedClientLogin = index.data(Qt::DisplayRole).toString();
-
-    printf("m_selectedClientLogin = %s \n", m_selectedClientLogin.toStdString().c_str());
     m_ClientServer->getMessagesWithClient(m_selectedClientLogin.toStdString());
-    //updateView();
 }

@@ -12,6 +12,8 @@ set ( SOURCES
  ClientServerInteraction.cpp
  GUIUpdater.cpp
  ResponseHandler.cpp
+ ClientListHandler.cpp
+ MessageHandler.cpp
 )
 
 set ( MOC_HEADERS
