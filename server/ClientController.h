@@ -18,15 +18,14 @@ private:
     void acceptHandler(boost::shared_ptr<Connection> connection, const boost::system::error_code & err);
 
 private:
-    ip::tcp::acceptor m_Acceptor;
-    ip::tcp::socket m_Socket;
-    enum { max_msg = 1024 };
-    char read_buffer_[max_msg];
-    char write_buffer_[max_msg];
-    std::string m_Login;
+    ip::tcp::acceptor m_acceptor;
+    ip::tcp::socket m_socket;
+    char m_bufferForReading[1024];
+    char m_bufferForWriting[1024];
+    std::string m_login;
 
-    std::vector<boost::shared_ptr<Connection> > m_ListWithClients;
-    std::shared_ptr<HistoryManager> m_HistoryManager;
+    std::vector<boost::shared_ptr<Connection> > m_listWithClients;
+    std::shared_ptr<HistoryManager> m_historyManager;
 };
 
 #endif

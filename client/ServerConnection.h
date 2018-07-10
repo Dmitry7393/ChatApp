@@ -9,32 +9,24 @@
 #include <boost/enable_shared_from_this.hpp>
 using namespace boost::asio;
 
-struct ServerConnection
+class ServerConnection
 {
+public:
     ServerConnection();
 
     void connect(ip::tcp::endpoint ep);
-
-    void sendRequestToServer(const std::string& message);
-    void setUsername(std::string username);
-
-    std::string username() const;
+    void sendRequestToServer(const std::string& request);
     std::string readResponse();
 
 private:
     size_t readComplete(const boost::system::error_code & err, size_t bytes);
 
 private:
-    io_service service;
-
-    ip::tcp::socket sock_;
-    enum { max_msg = 1024 };
-    int already_read_;
-    char buff_[max_msg];
-    bool started_;
-    std::string m_CurrentUsername;
-
-    //////////
+    io_service m_service;
+    ip::tcp::socket m_socket;
+    int m_alreadyRead;
+    char m_buffer[1024];
+    bool m_started;
     pthread_t m_threadReadResponseFromServer;
 };
 

@@ -41,9 +41,8 @@ private:
 
 private:
     tcp::socket m_Socket;
-    enum { max_msg = 1024 };
-    char read_buffer_[max_msg];
-    char write_buffer_[max_msg];
+    char read_buffer_[1024];
+    char write_buffer_[1024];
     std::string m_Login;
 
 private:

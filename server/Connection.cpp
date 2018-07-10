@@ -19,7 +19,6 @@ void Connection::SetState(ClientState* state)
 void Connection::readRequestFromClient()
 {
     printf("Connection::readRequestFromClient() m_clientIPAddress = %s \n", m_clientIPAddress.c_str());
-    memset(read_buffer_, 0, max_msg);
      async_read(m_Socket, buffer(read_buffer_),
                 boost::bind(&Connection::readComplete, shared_from_this(), _1, _2),
                 boost::bind(&Connection::handleRequest, shared_from_this(), _1, _2));
@@ -106,7 +105,6 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
     printf("Connection::handleRequest Client ip: %s \n", m_Socket.remote_endpoint().address().to_string().c_str());
     m_clientIPAddress = m_Socket.remote_endpoint().address().to_string();
     std::string requestFromClient(read_buffer_, bytes_transferred);
-    memset(read_buffer_, 0, max_msg);
     printf("Connection::handleRequest RequestFromClient: \n %s \n", requestFromClient.c_str());
 
     RequestHandler* requestHandler = createHandler(RequestHandler::getRequestType(requestFromClient));
@@ -150,7 +148,6 @@ void Connection::sendResponseToClient(const std::string& msg)
     std::copy(msg.begin(), msg.end(), write_buffer_);
     m_Socket.async_write_some( buffer(write_buffer_, msg.size()),
                           boost::bind(&Connection::onWriteMessage, shared_from_this(), _1, _2));
-    memset(write_buffer_, 0, max_msg);
 }
 
 void Connection::onWriteMessage(const boost::system::error_code& err, size_t bytes)

@@ -1,42 +1,28 @@
 #include "ServerConnection.h"
 
-
 ServerConnection::ServerConnection()
-    : sock_(service)
-    , started_(true)
+    : m_socket(m_service)
+    , m_started(true)
 {
 
 }
 
 std::string ServerConnection::readResponse()
 {
-    printf("--------------- READER ------------------- \n");
-    already_read_ = 0;
-    read(sock_, buffer(buff_), boost::bind(&ServerConnection::readComplete, this, _1, _2));
-    std::string response(buff_, already_read_);
+    m_alreadyRead = 0;
+    read(m_socket, buffer(m_buffer), boost::bind(&ServerConnection::readComplete, this, _1, _2));
+    std::string response(m_buffer, m_alreadyRead);
     return response;
 }
 
 void ServerConnection::connect(ip::tcp::endpoint ep)
 {
-    //check error code
-    sock_.connect(ep);
-}
-
-void ServerConnection::setUsername(std::string username)
-{
-    m_CurrentUsername = username;
+    m_socket.connect(ep);
 }
 
 void ServerConnection::sendRequestToServer(const std::string& request)
 {
-    printf("ServerConnection::sendRequestToServer: request = %s \n", request.c_str());
-    sock_.write_some(buffer(request));
-}
-
-std::string ServerConnection::username() const
-{
-    return m_CurrentUsername;
+    m_socket.write_some(buffer(request));
 }
 
 size_t ServerConnection::readComplete(const boost::system::error_code & err, size_t bytes)
@@ -46,15 +32,15 @@ size_t ServerConnection::readComplete(const boost::system::error_code & err, siz
 
     int count = 0;
     bool found = false;
-    already_read_ = bytes;
+    m_alreadyRead = bytes;
 
     for (size_t i = 0; i < bytes; ++i)
     {
-        if (buff_[i] == '{')
+        if (m_buffer[i] == '{')
         {
             count++;
         }
-        if (buff_[i] == '}')
+        if (m_buffer[i] == '}')
         {
             count--;
             if (count == 0)

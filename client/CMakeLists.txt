@@ -6,7 +6,6 @@ set (CMAKE_CXX_STANDARD 11)
 set ( SOURCES
  main.cpp
  mainwindow.cpp
- NetworkHandler.cpp
  ServerConnection.cpp
  JSONHandler.cpp
  ClientServerInteraction.cpp
@@ -18,7 +17,6 @@ set ( SOURCES
 
 set ( MOC_HEADERS
  mainwindow.h
- NetworkHandler.h
  ClientServerInteraction.h
 )
 
