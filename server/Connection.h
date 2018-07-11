@@ -28,12 +28,12 @@ public:
     void sendResponseToClient(const std::string& msg);
 
 private:
-  void readRequestFromClient();
-  size_t readComplete(const boost::system::error_code& err, size_t bytes);
-  void stop();
-  void handleRequest(const boost::system::error_code& error, std::size_t bytes_transferred);
-  void onWriteMessage(const boost::system::error_code& err, size_t bytes);
-  std::unique_ptr<RequestHandler> createHandler(RequestType requestType);
+    void readRequestFromClient();
+    size_t readComplete(const boost::system::error_code& err, size_t bytes);
+    void stop();
+    void handleRequest(const boost::system::error_code& error, std::size_t bytes_transferred);
+    void onWriteMessage(const boost::system::error_code& err, size_t bytes);
+    std::unique_ptr<RequestHandler> createHandler(RequestType requestType);
 
 private:
     tcp::socket m_Socket;

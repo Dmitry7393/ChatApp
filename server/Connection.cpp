@@ -100,7 +100,7 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
 {
     if (error)
     {
-       m_ClientState->StateChanged(m_Login);
+       m_ClientState->removeClient(m_Login);
        stop();
        return;
     }
@@ -111,16 +111,15 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
     std::unique_ptr<RequestHandler> requestHandler = createHandler(RequestHandler::getRequestType(requestFromClient));
 
     m_Login = requestHandler->getClientName(requestFromClient);
-    requestHandler->m_ClientList = m_ClientState->getClientList();
+    requestHandler->setClientList(m_ClientState->getClientList());
 
     std::string responseToClient = requestHandler->handle(requestFromClient);
 
     std::string userName = requestHandler->parseJSONValue(requestFromClient, JSONData::username);
     std::string usernameReceiver = requestHandler->parseJSONValue(requestFromClient, JSONData::usernameReceiver);
-    std::string message = requestHandler->parseJSONValue(requestFromClient, JSONData::message);
+
     printf("Connection::handleRequest   userName = %s \n", userName.c_str());
     printf("Connection::handleRequest   usernameReceiver = %s \n", usernameReceiver.c_str());
-    printf("Connection::handleRequest   message = %s \n", message.c_str());
 
     if (RequestHandler::getRequestType(requestFromClient) == RequestType::SendMessage)
     {

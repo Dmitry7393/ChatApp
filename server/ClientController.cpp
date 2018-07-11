@@ -21,14 +21,7 @@ void ClientController::startAccept()
 
 void ClientController::acceptHandler(boost::shared_ptr<Connection> connection, const boost::system::error_code & err)
 {
-    printf("ClientController::acceptHandler - new client \n");
     m_listWithClients.push_back(connection);
-
-    printf("******************* LIST WITH CLIENTS ******************* \n");
-    for (int i = 0; i < m_listWithClients.size(); ++i)
-    {
-        printf(" i = %d     %s \n", i, m_listWithClients.at(i)->socket().remote_endpoint().address().to_string().c_str());
-    }
 
     if (!err)
     {
@@ -38,9 +31,9 @@ void ClientController::acceptHandler(boost::shared_ptr<Connection> connection, c
     startAccept();
 }
 
-void ClientController::StateChanged(std::string login)
+void ClientController::removeClient(std::string login)
 {
-    printf(" ClientController::StateChanged() login = %s \n", login.c_str());
+    printf(" ClientController::removeClient() login = %s \n", login.c_str());
     for (int i = 0; i < m_listWithClients.size(); ++i)
     {
         if(m_listWithClients.at(i)->getLogin() == login)

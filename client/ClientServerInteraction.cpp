@@ -40,6 +40,7 @@ void ClientServerInteraction::readResponsesInSeparateThread()
 
 void ClientServerInteraction::handleResponse(const std::string& response)
 {
+    printf("ClientServerInteraction::handleResponse  response from server = %s \n", response.c_str());
     std::vector<std::string> list;
 
     switch(ResponseHandler::getResponseType(response))

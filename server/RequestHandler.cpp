@@ -59,35 +59,27 @@ RequestType RequestHandler::getRequestType(const std::string& request)
         if (index >= g_requestTypes.size())
         {
             printf("Incorrect request type  \n");
-          //  return 1;
+            return RequestType::PingServer;
         }
 
         switch (index)
         {
             case GetClientList:
-                printf("handle GetClientList request \n");
                 return RequestType::GetClientList;
                 break;
             case GetMessageWithUser:
-                printf("handle GetNewMessages request \n");
                 return RequestType::GetMessageWithUser;
                 break;
             case SendMessage:
-                printf("handle SendMessage request \n");
                 return RequestType::SendMessage;
                 break;
             case PingServer:
-                printf("handle SendMessage request \n");
                 return RequestType::PingServer;
                 break;
             default:
-                printf("Incorrect request type \n");
-                //return 1;
+                printf("Incorrect request type - return default \n");
+                return RequestType::PingServer;
         }
-
-        Json::Value jsonValueLogin = root["loginSender"];
-        std::string m_Login = jsonValueLogin.asString();
-        printf("login = %s \n", m_Login.c_str());
      }
 }
 
@@ -104,4 +96,9 @@ std::string RequestHandler::getClientName(const std::string& request)
         Json::Value jsonValueLogin = root["username"];
         return jsonValueLogin.asString();
     }
+}
+
+void RequestHandler::setClientList(std::vector<std::string> clientList)
+{
+    m_ClientList = clientList;
 }

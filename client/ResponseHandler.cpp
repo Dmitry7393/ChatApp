@@ -13,15 +13,15 @@ ResponseType ResponseHandler::getResponseType(const std::string& request)
     }
     else
     {
-        Json::Value jsonValueRequestType = root["responseType"];
-        std::string requestType = jsonValueRequestType.asString();
-        printf("responseType = %s \n", requestType.c_str());
+        Json::Value jsonValueResponseType = root["responseType"];
+        std::string responseType = jsonValueResponseType.asString();
+        printf("responseType = %s \n", responseType.c_str());
 
-        int index = std::find(g_requestTypes.begin(), g_requestTypes.end(), requestType) - g_requestTypes.begin();
+        int index = std::find(g_requestTypes.begin(), g_requestTypes.end(), responseType) - g_requestTypes.begin();
 
         if (index >= g_requestTypes.size())
         {
-            printf("Incorrect request type  \n");
+            printf("Incorrect response type  \n");
           //  return 1;
         }
 

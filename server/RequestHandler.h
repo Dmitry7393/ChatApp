@@ -29,16 +29,17 @@ class RequestHandler
 {
 
 public:
-    std::vector<std::string> m_ClientList;
     RequestHandler();
 
     virtual std::string handle(const std::string& jsonRequest) = 0;
     std::string parseJSONValue(const std::string& jsonString, JSONData jsonData);
     static RequestType getRequestType(const std::string& request);
     std::string getClientName(const std::string& request);
+    void setClientList(std::vector<std::string> clientList);
 
-public:
-    //std::shared_ptr<HistoryManager> m_HistoryManager;
+protected:
+    std::vector<std::string> m_ClientList;
+
 };
 
 #endif
