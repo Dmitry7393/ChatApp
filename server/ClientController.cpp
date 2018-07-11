@@ -11,8 +11,7 @@ ClientController::ClientController(io_service& service)
 void ClientController::startAccept()
 {
     printf("Waiting for clients... \n");
-    boost::shared_ptr<Connection> connection(new Connection(m_acceptor.get_io_service()));
-    connection->m_HistoryManager = m_historyManager;
+    boost::shared_ptr<Connection> connection(new Connection(m_acceptor.get_io_service(), m_historyManager));
     connection->SetState((ClientState*) this);
 
     m_acceptor.async_accept(connection->socket(),

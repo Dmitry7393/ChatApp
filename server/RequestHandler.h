@@ -38,7 +38,7 @@ public:
     std::string getClientName(const std::string& request);
 
 public:
-    std::shared_ptr<HistoryManager> m_HistoryManager;
+    //std::shared_ptr<HistoryManager> m_HistoryManager;
 };
 
 #endif

@@ -1,6 +1,7 @@
 #include "SaveMessageHandler.h"
 
-SaveMessageHandler::SaveMessageHandler()
+SaveMessageHandler::SaveMessageHandler(std::shared_ptr<HistoryManager> historyManager)
+    : m_historyManager(historyManager)
 {
 
 }
@@ -16,7 +17,7 @@ std::string SaveMessageHandler::handle(const std::string& jsonRequest)
     printf("loginReceiver = %s \n", loginReceiver.c_str());
     printf("message = %s \n", message.c_str());
 
-    if (m_HistoryManager->saveMessage(loginSender, loginReceiver, message))
+    if (m_historyManager->saveMessage(loginSender, loginReceiver, message))
     {
         return createSendMessageResponse();
     }

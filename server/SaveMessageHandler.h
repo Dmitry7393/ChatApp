@@ -6,9 +6,12 @@
 class SaveMessageHandler : public RequestHandler
 {
 public:
-    SaveMessageHandler();
+    SaveMessageHandler(std::shared_ptr<HistoryManager> historyManager);
     std::string handle(const std::string& jsonRequest);
     std::string createSendMessageResponse();
+
+private:
+    std::shared_ptr<HistoryManager> m_historyManager;
 };
 
 #endif

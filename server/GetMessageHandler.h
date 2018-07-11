@@ -5,9 +5,13 @@
 
 class GetMessageHandler : public RequestHandler
 {
+
 public:
-    GetMessageHandler();
+    GetMessageHandler(std::shared_ptr<HistoryManager> historyManager);
     std::string handle(const std::string& jsonRequest);
+
+private:
+    std::shared_ptr<HistoryManager> m_historyManager;
 };
 
 #endif
