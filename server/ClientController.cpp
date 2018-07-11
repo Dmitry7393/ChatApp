@@ -68,7 +68,6 @@ void ClientController::deliverMessageToClient(const std::string& receiver, const
     {
         if (m_listWithClients.at(i)->getLogin() == receiver)
         {
-            m_listWithClients.at(i)->call_ReadRequest = false;
             m_listWithClients.at(i)->sendResponseToClient(message);
         }
     }

@@ -12,13 +12,7 @@ struct Message
         , m_Message(message)
     {
     }
-   /* template<typename T, typename U>
-        Message(T&& loginSender, U&& message)  :
-            m_LoginSender(std::forward<T>(loginSender)),
-            m_Message(std::forward<U>(message))
-        {
-        }
-*/
+
     std::string m_LoginSender; //user, which has sent the message
     std::string m_Message;
 };

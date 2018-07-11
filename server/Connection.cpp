@@ -2,6 +2,7 @@
 
 Connection::Connection(boost::asio::io_service& io_service)
   : m_Socket(io_service)
+  , m_readRequest(true)
 {
 
 }
@@ -19,9 +20,13 @@ void Connection::SetState(ClientState* state)
 void Connection::readRequestFromClient()
 {
     printf("Connection::readRequestFromClient() m_clientIPAddress = %s \n", m_clientIPAddress.c_str());
-     async_read(m_Socket, buffer(read_buffer_),
-                boost::bind(&Connection::readComplete, shared_from_this(), _1, _2),
-                boost::bind(&Connection::handleRequest, shared_from_this(), _1, _2));
+    if (m_readRequest)
+    {
+        m_readRequest = false;
+        async_read(m_Socket, buffer(read_buffer_),
+                   boost::bind(&Connection::readComplete, shared_from_this(), _1, _2),
+                   boost::bind(&Connection::handleRequest, shared_from_this(), _1, _2));
+    }
 }
 
 size_t Connection::readComplete(const boost::system::error_code & err, size_t bytes)
@@ -46,7 +51,6 @@ size_t Connection::readComplete(const boost::system::error_code & err, size_t by
                count--;
                if (count == 0)
                {
-                   printf("Connection::readComplete - found = true - break \n");
                    found = true;
                    break;
                }
@@ -138,7 +142,7 @@ void Connection::handleRequest(const boost::system::error_code& error, std::size
     printf("Connection::handleRequest call sendResponseTo current Client responseToClient = %s | \n", responseToClient.c_str());
 
     sendResponseToClient(responseToClient);
-    call_ReadRequest = true;
+    m_readRequest = true;
 }
 
 
@@ -153,9 +157,5 @@ void Connection::sendResponseToClient(const std::string& msg)
 void Connection::onWriteMessage(const boost::system::error_code& err, size_t bytes)
 {
     printf("Connection::onWriteMessage \n");
-    if (call_ReadRequest)
-    {
-        printf("Connection::onWriteMessage call function readRequestFromClient() \n");
-        readRequestFromClient();
-    }
+    readRequestFromClient();
 }

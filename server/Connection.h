@@ -7,13 +7,14 @@
 #include <boost/asio.hpp>
 #include <boost/shared_ptr.hpp>
 #include <boost/enable_shared_from_this.hpp>
-using namespace boost::asio;
-using boost::asio::ip::tcp;
 
 #include "ClientState.h"
 #include "ClientListHandler.h"
 #include "SaveMessageHandler.h"
 #include "GetMessageHandler.h"
+
+using namespace boost::asio;
+using boost::asio::ip::tcp;
 
 class Connection : public boost::enable_shared_from_this<Connection>
 {
@@ -28,7 +29,6 @@ public:
     std::shared_ptr<HistoryManager> m_HistoryManager;
 
     void sendResponseToClient(const std::string& msg);
-    bool call_ReadRequest = true;
 private:
 
   void readRequestFromClient();
@@ -48,6 +48,7 @@ private:
 private:
     static ClientState* m_ClientState;
     std::string m_clientIPAddress;
+    bool m_readRequest;
 };
 
 #endif

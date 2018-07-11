@@ -1,6 +1,9 @@
 #include "GetMessageHandler.h"
 
-GetMessageHandler::GetMessageHandler() { }
+GetMessageHandler::GetMessageHandler()
+{
+
+}
 
 std::string GetMessageHandler::handle(const std::string& jsonRequest)
 {
