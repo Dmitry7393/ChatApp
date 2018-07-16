@@ -8,7 +8,7 @@ SaveMessageHandler::SaveMessageHandler(std::shared_ptr<HistoryManager> historyMa
 
 std::string SaveMessageHandler::handle(const std::string& jsonRequest)
 {
-    printf("SaveMessageHandler::handle \n");
+    printf("SaveMessageHandler::handle() \n");
     std::string loginSender = parseJSONValue(jsonRequest, JSONData::username);
     std::string loginReceiver = parseJSONValue(jsonRequest, JSONData::usernameReceiver);
     std::string message = parseJSONValue(jsonRequest, JSONData::message);

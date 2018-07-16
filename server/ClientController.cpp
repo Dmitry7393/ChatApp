@@ -33,12 +33,11 @@ void ClientController::acceptHandler(boost::shared_ptr<Connection> connection, c
 
 void ClientController::removeClient(std::string login)
 {
-    printf(" ClientController::removeClient() login = %s \n", login.c_str());
     for (int i = 0; i < m_listWithClients.size(); ++i)
     {
         if(m_listWithClients.at(i)->getLogin() == login)
         {
-            printf(" remove from list user with login: %s \n", login.c_str());
+            printf("ClientController::removeClient() login: %s \n", login.c_str());
             m_listWithClients.erase(m_listWithClients.begin() + i);
         }
     }

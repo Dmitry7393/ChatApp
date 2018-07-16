@@ -22,7 +22,6 @@ ResponseType ResponseHandler::getResponseType(const std::string& request)
         if (index >= g_requestTypes.size())
         {
             printf("Incorrect response type  \n");
-          //  return 1;
         }
 
         switch (index)
@@ -35,7 +34,6 @@ ResponseType ResponseHandler::getResponseType(const std::string& request)
                 break;
             default:
                 printf("Incorrect request type \n");
-                //return 1;
         }
 
         Json::Value jsonValueLogin = root["loginSender"];

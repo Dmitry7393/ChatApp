@@ -3,7 +3,6 @@
 ClientServerInteraction::ClientServerInteraction(const std::string& serverIP, int port)
    : m_Endpoint(ip::address::from_string(serverIP), port),
      m_ServerConnection(new ServerConnection)
-   //  m_ResponseHandler(new ResponseHandler)
 {
     try
     {
