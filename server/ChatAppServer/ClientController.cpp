@@ -3,7 +3,7 @@
 ClientController::ClientController(io_service& service)
   : m_acceptor(service, ip::tcp::endpoint(ip::tcp::v4(), 5555))
   , m_socket(service)
-  , m_historyManager(new HistoryManager)
+  , m_historyManager(std::make_shared<HistoryManager>())
 {
     startAccept();
 }
@@ -12,7 +12,7 @@ void ClientController::startAccept()
 {
     printf("Waiting for clients... \n");
     boost::shared_ptr<Connection> connection(new Connection(m_acceptor.get_io_service(), m_historyManager));
-    connection->SetState((ClientState*) this);
+    connection->SetState(static_cast<ClientState*> (this));
 
     m_acceptor.async_accept(connection->socket(),
           boost::bind(&ClientController::acceptHandler, this, connection,
@@ -26,9 +26,8 @@ void ClientController::acceptHandler(boost::shared_ptr<Connection> connection, c
     if (!err)
     {
         connection->start();
+        startAccept();
     }
-
-    startAccept();
 }
 
 void ClientController::removeClient(std::string login)
