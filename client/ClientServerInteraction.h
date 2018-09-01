@@ -23,9 +23,8 @@ public:
     void setGUIUpdater(GUIUpdater* updater);
     void setUsername(const std::string& username);
     std::string getUsername();
-    void readResponsesInSeparateThread();
+
     void handleResponse(const std::string& response);
-    void readDataFromServer();
 
     //requests to server
     void sendMessage(const std::string& message, const std::string& userReceiver);
@@ -33,12 +32,16 @@ public:
     void sendRequestForMessages(const std::string& selectedUser);
 
 private:
+    void readDataFromServer();
+    void readResponsesInSeparateThread();
+
+private:
     std::string m_Username;
     ip::tcp::endpoint m_Endpoint;
     boost::shared_ptr<ServerConnection> m_ServerConnection;
     JSONHandler m_JSONHandler;
 
-    std::thread* m_threadCheckDataFromServer;
+    std::unique_ptr<std::thread> m_threadCheckDataFromServer;
     GUIUpdater* m_GUIUpdater;
     std::unique_ptr<ResponseHandler> m_responseHandler;
 

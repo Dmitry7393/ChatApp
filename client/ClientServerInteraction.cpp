@@ -12,6 +12,8 @@ ClientServerInteraction::ClientServerInteraction(const std::string& serverIP, in
     {
         std::cout << err.what() << std::endl;
     }
+
+    readDataFromServer();
 }
 
 void ClientServerInteraction::setGUIUpdater(GUIUpdater* updater)
@@ -61,7 +63,7 @@ void ClientServerInteraction::handleResponse(const std::string& response)
 
 void ClientServerInteraction::readDataFromServer()
 {
-    m_threadCheckDataFromServer = new std::thread(&ClientServerInteraction::readResponsesInSeparateThread, this);
+    m_threadCheckDataFromServer.reset(new std::thread(&ClientServerInteraction::readResponsesInSeparateThread, this));
 }
 
 void ClientServerInteraction::sendMessage(const std::string& message, const std::string& userReceiver)

@@ -15,9 +15,10 @@ enum ResponseType
 class ResponseHandler
 {
 public:
-    ResponseHandler();
     static ResponseType getResponseType(const std::string& request);
     virtual std::vector<std::string> handle(const std::string& jsonResponse) = 0;
+
+    virtual ~ResponseHandler() {}
 };
 
 #endif

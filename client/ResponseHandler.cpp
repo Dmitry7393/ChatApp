@@ -1,15 +1,20 @@
 #include "ResponseHandler.h"
 
-ResponseHandler::ResponseHandler() { }
-
 ResponseType ResponseHandler::getResponseType(const std::string& request)
 {
     std::vector<std::string> g_requestTypes = { "ClientList", "DeliverMessage" };
     Json::Value root;
     Json::Reader reader;
+
+    Json::Value jsonValueLogin = root["loginSender"];
+    std::string m_Login = jsonValueLogin.asString();
+    printf("login = %s \n", m_Login.c_str());
+
     if (!reader.parse(request, root))
     {
         std::cout << "Error: " << reader.getFormattedErrorMessages();
+        // if something is wrong with request message, just return updated ClientList
+        return ResponseType::ClientList;
     }
     else
     {
@@ -34,11 +39,8 @@ ResponseType ResponseHandler::getResponseType(const std::string& request)
                 break;
             default:
                 printf("Incorrect request type \n");
+                return ResponseType::ClientList;
         }
-
-        Json::Value jsonValueLogin = root["loginSender"];
-        std::string m_Login = jsonValueLogin.asString();
-        printf("login = %s \n", m_Login.c_str());
      }
 }
 

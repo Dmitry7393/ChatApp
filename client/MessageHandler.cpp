@@ -14,6 +14,7 @@ std::vector<std::string> MessageHandler::handle(const std::string& jsonResponse)
     if (!reader.parse(jsonResponse, root))
     {
         std::cout << "Error: " << reader.getFormattedErrorMessages();
+        return list;
     }
     else
     {

@@ -22,7 +22,14 @@ void ServerConnection::connect(ip::tcp::endpoint ep)
 
 void ServerConnection::sendRequestToServer(const std::string& request)
 {
-    m_socket.write_some(buffer(request));
+    try
+    {
+        m_socket.write_some(buffer(request));
+    }
+    catch(const boost::system::system_error& ex)
+    {
+        printf("ServerConnection::sendRequestToServer Failed to send request to server \n");
+    }
 }
 
 size_t ServerConnection::readComplete(const boost::system::error_code & err, size_t bytes)

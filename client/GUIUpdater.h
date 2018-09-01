@@ -8,8 +8,9 @@ class GUIUpdater
 
 public:
     virtual void updateClientListView(const std::vector<std::string>& clientList) = 0;
-    virtual void updateMessageBrowser(std::vector<std::string> messageList) = 0;
+    virtual void updateMessageBrowser(const std::vector<std::string>& messageList) = 0;
 
+    virtual ~GUIUpdater() {}
 };
 
 #endif

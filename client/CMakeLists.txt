@@ -10,7 +10,6 @@ set ( SOURCES
  ServerConnection.cpp
  JSONHandler.cpp
  ClientServerInteraction.cpp
- GUIUpdater.cpp
  ResponseHandler.cpp
  ClientListHandler.cpp
  MessageHandler.cpp
@@ -24,10 +23,6 @@ set ( MOC_HEADERS
 set ( UIS
  mainwindow.ui
 )
-
-#set ( RESOURCES
-# main.qrc
-#)
 
 find_package(Boost 1.40.0 REQUIRED system thread serialization)
 find_package(PkgConfig REQUIRED)

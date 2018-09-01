@@ -24,11 +24,11 @@ class MainWindow : public QMainWindow, public GUIUpdater
 
 public:
     explicit MainWindow(std::string serverIP, int port, QWidget *parent = 0);
-     ~MainWindow();
 
-public slots:
     void updateClientListView(const std::vector<std::string>& clientList);
-    void updateMessageBrowser(std::vector<std::string> messageList);
+    void updateMessageBrowser(const std::vector<std::string>& messageList);
+
+    ~MainWindow();
 
 private slots:
     void updateClientList();
@@ -36,9 +36,9 @@ private slots:
     void selectClient(const QModelIndex& index);
 
 private:
-    Ui::MainWindow *ui;
+    QScopedPointer<Ui::MainWindow> m_ui;
     QScopedPointer<ClientServerInteraction> m_ClientServer;
-    QStringListModel *model;
+    QStringListModel *m_ListModel;
     QString m_selectedClientLogin;
 };
 
